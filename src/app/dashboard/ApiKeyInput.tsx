@@ -47,6 +47,7 @@ export default function ApiKeyInput(props: Props) {
         setStatus(CheckState.Invalid);
       }
     } catch (err) {
+      console.error(err);
       setStatus(CheckState.Invalid);
     }
   };

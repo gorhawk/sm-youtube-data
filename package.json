@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ghpages": "gh-pages -d out -o origin -b github-publish -f --nojekyll",
+    "deploy": "next build && npm run ghpages"
   },
   "dependencies": {
     "@azure/msal-browser": "^4.11.0",
