@@ -3,7 +3,10 @@ export const msalConfig = {
     clientId: "ef50611d-7581-4943-b9fe-3e893c2a7005", // "sm_youtube_data" app from Azure
     authority:
       "https://login.microsoftonline.com/a2000560-ea4b-4f9a-b537-fd0e3e0142b8", // tenant ID from Azure
-    redirectUri: "https://sm-youtube-data.gorhawk.github.io",
+    redirectUri:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000/"
+        : "https://gorhawk.github.io/sm-youtube-data",
   },
 };
 
