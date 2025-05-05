@@ -9,6 +9,7 @@ import Button from "./Button";
 import { FilterButton } from "./FilterButton";
 import clsx from "clsx";
 import Spinner from "./Spinner";
+import * as Sentry from "@sentry/react";
 import {
   getGraphEndpointFromShareLink,
   getMicrosoftToken,
@@ -125,12 +126,16 @@ export default function Dashboard() {
       }, 100);
     } catch (error) {
       console.error(error);
+      Sentry.captureException(error);
       setIsLoading(false);
       setIsError(true);
     }
   };
 
   const getViewsData = async () => {
+    if (!videos.length) {
+      return;
+    }
     setIsLoading(true);
     setIsError(false);
     try {
@@ -149,6 +154,7 @@ export default function Dashboard() {
       }, 100);
     } catch (error) {
       console.error(error);
+      Sentry.captureException(error);
       setIsLoading(false);
       setIsError(true);
     }
@@ -235,7 +241,7 @@ export default function Dashboard() {
               <Button
                 onClick={getViewsData}
                 title="Nézettség frissítése"
-                disabled={isLoading}
+                disabled={isLoading || videos.length === 0}
               >
                 Nézettség&nbsp;<span className="">↻</span>
               </Button>
