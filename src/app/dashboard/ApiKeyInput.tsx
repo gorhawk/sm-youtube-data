@@ -76,7 +76,7 @@ export default function ApiKeyInput(props: Props) {
       >
         <div>Kulcs: </div>
         <div className="min-w-4 whitespace-nowrap">
-          {status === CheckState.Valid && apiKey}{" "}
+          {status === CheckState.Valid && props.initKey}{" "}
           {CheckStateMap[status].content}
         </div>
       </div>
