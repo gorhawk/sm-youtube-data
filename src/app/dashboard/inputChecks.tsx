@@ -17,7 +17,7 @@ export const CheckStateMap = {
     content: <Spinner />,
   },
   [CheckState.Valid]: {
-    class: "text-green-600 dark: text-teal-500",
+    class: "text-green-600 dark:text-teal-500",
     content: "✔",
   },
   [CheckState.Invalid]: {
