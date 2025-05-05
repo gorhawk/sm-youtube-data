@@ -202,7 +202,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="mx-8 mb-12 max-w-7xl pt-6 text-sm text-slate-700">
+    <div className="mx-8 mb-12 max-w-7xl pt-6 text-sm text-slate-700 dark:text-slate-300">
       <div className="mb-4 gap-2">
         <DocumentInput
           initLink={excelLink}
@@ -249,12 +249,12 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-4 items-center">
             {videosDate && (
-              <div className="text-slate-400 whitespace-nowrap">
+              <div className="text-slate-400 whitespace-nowrap dark:text-slate-600">
                 Videók ({new Date(videosDate).toLocaleString("sv-SE")})
               </div>
             )}
             {viewsDate && (
-              <div className="text-slate-400 whitespace-nowrap">
+              <div className="text-slate-400 whitespace-nowrap dark:text-slate-600">
                 Nézettség ({new Date(viewsDate).toLocaleString("sv-SE")})
               </div>
             )}
@@ -262,7 +262,7 @@ export default function Dashboard() {
         </div>
         <div className="flex gap-4 my-4 items-center">
           <div className="flex gap-2 items-center grow">
-            <div className="block font-bold text-slate-700">Filter:</div>
+            <div className="block font-bold">Filter:</div>
             <div className="flex gap-2 flex-wrap">
               {filters.map((name) => (
                 <FilterButton
@@ -275,10 +275,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex gap-2 items-center grow-5 max-w-72">
-            <label
-              className="block font-bold text-slate-700"
-              htmlFor="filterText"
-            >
+            <label className="block font-bold" htmlFor="filterText">
               Track:
             </label>
             <div className="grow min-w-32">
@@ -293,19 +290,19 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="max-w-full">
-          <table className="w-full max-w-full border-collapse bg-white shadow-sm">
+          <table className="w-full max-w-full border-collapse bg-transparent shadow-sm">
             <thead>
-              <tr className="bg-gray-100 font-bold text-gray-700">
-                <th className="border border-gray-300 px-4 py-1 text-left ">
+              <tr className="bg-gray-100 font-bold text-gray-700 dark:bg-slate-700 dark:text-slate-200">
+                <th className="border border-gray-300 px-4 py-1 text-left dark:border-slate-500">
                   Csatorna
                 </th>
-                <th className="border border-gray-300 px-4 py-1 text-left">
+                <th className="border border-gray-300 px-4 py-1 text-left dark:border-slate-500">
                   Track
                 </th>
-                <th className="border border-gray-300 px-4 py-1 text-left">
+                <th className="border border-gray-300 px-4 py-1 text-left dark:border-slate-500">
                   Youtube link
                 </th>
-                <th className="border border-gray-300 px-4 py-1 text-left select-none cursor-pointer hover:bg-gray-200">
+                <th className="border border-gray-300 px-4 py-1 text-left select-none cursor-pointer hover:bg-gray-200 dark:border-slate-500  dark:hover:bg-gray-600">
                   <div
                     onClick={() => {
                       setSortDir(SORT_MAP[sortDir].nextDir);
@@ -316,16 +313,24 @@ export default function Dashboard() {
                 </th>
               </tr>
             </thead>
-            <tbody className="text-gray-900">
+            <tbody className="text-gray-900 dark:text-gray-300">
               {displayedVideos.map((video, index) => (
-                <tr key={index} className="bg-white even:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-1 whitespace-nowrap">
+                <tr
+                  key={index}
+                  className="bg-transparent even:bg-gray-50 dark:even:bg-gray-700/25"
+                >
+                  <td className="border border-gray-300 px-4 py-1 whitespace-nowrap dark:border-slate-500">
                     {video.channel}
                   </td>
-                  <td className="border border-gray-300 px-4 py-1">
+                  <td className="border border-gray-300 px-4 py-1 dark:border-slate-500">
                     {video.track}
                   </td>
-                  <td className="border border-gray-300 px-4 py-1 text-blue-600 hover:text-blue-800">
+                  <td
+                    className={clsx(
+                      "border border-gray-300 px-4 py-1 text-blue-600 hover:text-blue-800",
+                      "dark:border-slate-500 dark:text-cyan-500 dark:hover:text-sky-300"
+                    )}
+                  >
                     <a
                       href={video.link}
                       target="_blank"
@@ -336,7 +341,7 @@ export default function Dashboard() {
                       {video.link}
                     </a>
                   </td>
-                  <td className="border border-gray-300 px-4 py-1">
+                  <td className="border border-gray-300 px-4 py-1 dark:border-slate-500">
                     {views[video.videoId]?.toLocaleString()}
                   </td>
                 </tr>

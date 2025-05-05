@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen mx-auto antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen mx-auto antialiased dark:bg-slate-800`}
       >
         <MsalProviderWrapper>{children}</MsalProviderWrapper>
       </body>
