@@ -17,7 +17,8 @@ export function getGraphEndpointFromShareLink(shareLink: string): string {
 const loginRequest = {
   scopes: [
     "User.Read", // Basic login info
-    "Files.Read", // Only allows access to user-owned/shared files
+    "Files.Read", // Only allows access to user-owned? files
+    "Files.Read.All", // shared files
     "offline_access", // For refresh tokens (optional)
   ],
 };

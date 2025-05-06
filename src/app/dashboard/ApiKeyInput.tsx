@@ -5,6 +5,7 @@ import Button from "./Button";
 import TextInput from "./TextInput";
 import clsx from "clsx";
 import { CheckState, CheckStateMap } from "./inputChecks";
+import * as Sentry from "@sentry/react";
 
 type Props = {
   initKey?: string;
@@ -48,6 +49,7 @@ export default function ApiKeyInput(props: Props) {
       }
     } catch (err) {
       console.error(err);
+      Sentry.captureException(err);
       setStatus(CheckState.Invalid);
     }
   };

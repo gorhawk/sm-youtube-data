@@ -7,6 +7,7 @@ import TextInput from "./TextInput";
 import Button from "./Button";
 import { CheckState, CheckStateMap } from "./inputChecks";
 import clsx from "clsx";
+import * as Sentry from "@sentry/react";
 
 type Props = {
   initLink?: string;
@@ -57,6 +58,7 @@ export default function DocumentInput(props: Props) {
       }
     } catch (error) {
       console.error(error);
+      Sentry.captureException(error);
       setStatus(CheckState.Invalid);
       setMessage("Hiba");
     }
