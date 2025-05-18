@@ -6,7 +6,7 @@ export const msalConfig = {
     redirectUri:
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000/"
-        : "https://gorhawk.github.io/sm-youtube-data",
+        : "https://supermanagement.github.io/platform-data/",
   },
 };
 

@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
 };
 
 if (process.env.NODE_ENV === "production") {
-  nextConfig.basePath = "/sm-youtube-data"; // for github pages
+  nextConfig.basePath = "/platform-data"; // for github pages
 }
 
 export default nextConfig;

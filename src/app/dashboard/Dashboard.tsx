@@ -2,6 +2,7 @@
 
 import { useMsal } from "@azure/msal-react";
 import { useState } from "react";
+import { Roboto } from "next/font/google";
 import DocumentInput from "./DocumentInput";
 import TextInput from "./TextInput";
 import ApiKeyInput from "./ApiKeyInput";
@@ -13,9 +14,17 @@ import * as Sentry from "@sentry/react";
 import {
   getGraphEndpointFromShareLink,
   getMicrosoftToken,
+  getThreshold,
   getViews,
   useLocalState,
 } from "./utility";
+import ViewsMilestones from "./ViewsMilestones";
+
+const robotoSans = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const ENV_API_KEY = process.env.NEXT_PUBLIC_API_KEY ?? "";
 const SHEET_NAME = "tracks1";
@@ -57,10 +66,15 @@ export default function Dashboard() {
   const [excelFilename, setExcelFilename] = useLocalState("excel_filename", "");
   const [ytApiKey, setYtApiKey] = useLocalState("youtube_api_key", ENV_API_KEY);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [milestoneFilter, setMilestoneFilter] = useState<boolean>(false);
   const [sortDir, setSortDir] = useState(SortDirection.NONE);
   const [filterText, setFilterText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [numbers, setNumbers] = useLocalState<number[]>(
+    "views_milestones",
+    [0.1, 0.5, 1, 3, 5, 10, 20, 30, 50, 80, 100]
+  );
   const [viewsDate, setViewsDate] = useLocalState<number | undefined>(
     "views_date",
     undefined
@@ -69,6 +83,13 @@ export default function Dashboard() {
     "videos_date",
     undefined
   );
+
+  const setViewMilestones = (numbers: number[]) => {
+    setNumbers(numbers);
+    setTimeout(() => {
+      window.localStorage.setItem("views_milestones", JSON.stringify(numbers));
+    }, 50);
+  };
 
   const filters = videos
     .map((video) => video.channel)
@@ -160,6 +181,18 @@ export default function Dashboard() {
     }
   };
 
+  const viewMilestoneMap = videos.reduce((acc, current) => {
+    acc[current.videoId] = numbers.some((value) => {
+      const viewCount = value * 1000000;
+      return (
+        views[current.videoId] <= viewCount &&
+        views[current.videoId] >= viewCount - getThreshold(viewCount)
+      );
+    });
+
+    return acc;
+  }, {} as Record<string, boolean>);
+
   const handleLinkCheck = (link: string, filename: string) => {
     setExcelLink(link);
     setExcelFilename(filename);
@@ -198,6 +231,12 @@ export default function Dashboard() {
     );
   }
 
+  if (milestoneFilter) {
+    displayedVideos = displayedVideos.filter(
+      (v) => viewMilestoneMap[v.videoId]
+    );
+  }
+
   if (sortDir !== SortDirection.NONE) {
     displayedVideos = displayedVideos.toSorted((a, b) => {
       const viewsA = views[a.videoId] ?? 0;
@@ -208,7 +247,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="mx-8 mb-12 max-w-7xl pt-6 text-sm text-slate-700 dark:text-slate-300">
+    <div
+      className={`mx-8 mb-12 max-w-7xl pt-6 text-sm text-slate-700 dark:text-slate-300 ${robotoSans.className}`}
+    >
       <div className="mb-4 gap-2">
         <DocumentInput
           initLink={excelLink}
@@ -225,7 +266,7 @@ export default function Dashboard() {
             (!excelLink || !ytApiKey) && !videos.length,
         })}
       >
-        <div className="my-12 flex gap-4 items-center flex-wrap">
+        <div className="my-4 flex gap-4 items-center flex-wrap">
           <div className="flex gap-4 items-center">
             <div className="font-semibold whitespace-nowrap">
               Adatok betöltése:
@@ -267,8 +308,26 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="flex gap-4 my-4 items-center">
+          <div className="block font-bold">Nézettségkiemelő:</div>
+          <div className="my-2">
+            <ViewsMilestones numbers={numbers} setNumbers={setViewMilestones} />
+          </div>
+        </div>
+        <div className="flex gap-4 my-4 items-center">
           <div className="flex gap-2 items-center grow">
-            <div className="block font-bold">Filter:</div>
+            <div className="block font-bold">Kiemelt filter:</div>
+            <div className="flex gap-2 flex-wrap">
+              <input
+                type="checkbox"
+                checked={milestoneFilter}
+                onChange={(e) => setMilestoneFilter(e.target.checked)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-4 my-4 items-center">
+          <div className="flex gap-2 items-center grow">
+            <div className="block font-bold">Csatorna filter:</div>
             <div className="flex gap-2 flex-wrap">
               {filters.map((name) => (
                 <FilterButton
@@ -323,7 +382,7 @@ export default function Dashboard() {
               {displayedVideos.map((video, index) => (
                 <tr
                   key={index}
-                  className="bg-transparent even:bg-gray-50 dark:even:bg-gray-700/25"
+                  className={clsx("even:bg-gray-50 dark:even:bg-gray-700/25")}
                 >
                   <td className="border border-gray-300 px-4 py-1 whitespace-nowrap dark:border-slate-500">
                     {video.channel}
@@ -347,7 +406,14 @@ export default function Dashboard() {
                       {video.link}
                     </a>
                   </td>
-                  <td className="border border-gray-300 px-4 py-1 dark:border-slate-500">
+                  <td
+                    className={clsx(
+                      "border border-gray-300 px-4 py-1 dark:border-slate-500",
+                      viewMilestoneMap[video.videoId]
+                        ? "bg-amber-200 dark:bg-cyan-500/35 dark:inset-shadow-[0_0_3px_0px_#00000055]"
+                        : "even:bg-gray-50 dark:even:bg-gray-700/25"
+                    )}
+                  >
                     {views[video.videoId]?.toLocaleString()}
                   </td>
                 </tr>

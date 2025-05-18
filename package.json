@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ghpages": "gh-pages -d out -o origin -b github-publish -f --nojekyll",
+    "ghpages": "gh-pages -d out -o sm -b github-publish -f --nojekyll",
     "deploy": "next build && npm run ghpages"
   },
   "dependencies": {

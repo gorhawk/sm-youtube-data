@@ -5,6 +5,23 @@ import {
 } from "@azure/msal-browser";
 import { useState } from "react";
 
+const VIEWS_THRESHOLD_TABLE = [
+  [20000000, 1000000],
+  [10000000, 500000],
+  [1000000, 100000],
+  [500000, 25000],
+  [50000, 10000],
+  [10000, 1000],
+];
+
+export function getThreshold(n: number): number {
+  for (const [min, threshold] of VIEWS_THRESHOLD_TABLE) {
+    if (n >= min) return threshold;
+  }
+
+  return 0;
+}
+
 export function getGraphEndpointFromShareLink(shareLink: string): string {
   const base64 = btoa(shareLink)
     .replace(/\+/g, "-")
